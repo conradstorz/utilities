@@ -11,7 +11,7 @@ setuptools.setup(
     description="A collection of Time, Date, Filehandling and webscraping functions",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/",
+    url="https://github.com/conradstorz/utilities.git",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
