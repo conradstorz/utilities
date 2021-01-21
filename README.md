@@ -1,5 +1,3 @@
-# Example Package
+# Personal utilities for Conrad F Storz IV (CFSIV)
 
-This is a simple example package. You can use
-[Github-flavored Markdown](https://guides.github.com/features/mastering-markdown/)
-to write your content.
+This repository is uploaded to PyPi as "CFSIV-utilities-package"
