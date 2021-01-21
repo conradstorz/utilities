@@ -1,0 +1,11 @@
+README.md
+setup.py
+CFSIV_utilities_package.egg-info/PKG-INFO
+CFSIV_utilities_package.egg-info/SOURCES.txt
+CFSIV_utilities_package.egg-info/dependency_links.txt
+CFSIV_utilities_package.egg-info/top_level.txt
+utils/WebScraping.py
+utils/__init__.py
+utils/data2csv.py
+utils/filehandling.py
+utils/time_strings.py
