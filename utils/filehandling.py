@@ -3,9 +3,8 @@
 """Standardize methods for file handling. 
     The functions include verifing filenames are safe for OS in use.
     Files are handled using the pathlib approach.
-    Data can be saved in flat CSV files from several types of data formats.
     Sub-Directory structures can be generated from timestamps.
-    CSV files get appended if they already exist.
+    Sub-Directory structures can be generated from filenames.
 """
 
 from os import error
@@ -169,6 +168,13 @@ def Main():
     testname = new_name_if_exists(Path('README.md'))
     assert testname == Path('README(1).md')
 
+    copy_to_target(
+
+    copy_to_target_and_divide_by_filedate(
+
+    copy_to_target_and_divide_by_dictionary(
+
+    check_and_validate(
 
 
 if __name__ == '__main__':
