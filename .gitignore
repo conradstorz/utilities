@@ -1,0 +1,12 @@
+.idea/
+.vscode/
+poetry.lock
+pyproject.toml
+venv/
+__pycache__/
+build/
+dist/
+*.egg-info
+.eggs/
+*.log
+LOGS/
