@@ -10,7 +10,8 @@
 
 from os import error
 from pathlib import Path
-from shutil import SpecialFileError, shutil as _shutil
+import shutil as _shutil
+from shutil import SpecialFileError
 from time_strings import timefstring
 
 
