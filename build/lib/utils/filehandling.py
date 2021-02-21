@@ -8,46 +8,153 @@
     CSV files get appended if they already exist.
 """
 
+from os import error
 from pathlib import Path
+import shutil as _shutil
+from shutil import SpecialFileError
+from time_strings import timefstring
 
 
 def clean_filename_str(fn):
-    """Remove invalid characters from provided string."""
-    return Path("".join(i for i in fn if i not in "\/:*?<>|"))
+    """Replace invalid characters from provided string with underscores.
+        Note: '-' is invalid in windows if it is the last character in a name.
+    """
+    return Path("_".join(i for i in fn if i not in "\/:*?<>|-"))
 
 
-def check_and_validate(fname, direc, rename=False):
-    """Return a PathObj for this filename/directory.
-    Fail if filename already exists in directory but optionally rename.
+
+def new_name_if_exists(file: Path):
+    """Make a new filename that avoids name collisions.
+        example: filename(xx).ext where xx is incremented until 
+        unused filename is created.
+
+        Args:
+            file (Path): proposed unique filename.
+
+        Returns:
+            Path_obj: Guaranteed unique filename.
     """
-    fn = clean_filename_str(fname)
-    direc.mkdir(parents=True, exist_ok=True)
-    OUT_PATH_HANDLE = Path(direc, fn)
-    """
-    i = 0
-    while Path(OUT_PATH_HANDLE).exists():
-        if rename: # this routine does not currently work
-            # TODO  strip old (#) from name and rename
-            i += 1
-            fn = f"{fn}({i})"
-            OUT_PATH_HANDLE = Path(direc, fn)
+    new_name = file
+    i = 1
+    while True:
+        if not new_name.is_file():
+            return new_name
         else:
-            raise (FileExistsError)
-    """
-    return OUT_PATH_HANDLE
+            new_name = file.with_name(f"{file.stem}({i}){file.suffix}")
+            i += 1
 
 
-def create_timestamp_subdirectory_Structure(timestamp: str):
+
+def copy_to_target(file: Path, target_diectory=None):
+    """Copy offered file to new location
+        while ensuring not to overwrite any existing file.
+
+    Args:
+        file (Path): Filename to copy to new location.
+        target_directory (Path, optional): must be a valid Path if provided.
+            Current working directory will be used as default if not provided.
+
+    Returns:
+        bool: Always returns True unless 'SpecialFileError' is raised.
     """
-    Takes a string (2020-10-05_020600UTC) representing a datetime
-    and attempts to create a directory structure in the format ./YYYY/MM/DD/ 
-    and returns a string representation of the directory.
+    if target_diectory == None:
+        target_diectory = Path.cwd()
+    else:
+        if type(target_diectory) != Path:
+            raise FileNotFoundError(f'target_directory must be type Path, got {type(target_diectory)}')
+    new_file = new_name_if_exists(target_diectory / file.name)
+    try:
+        _shutil.copy2(file, new_file)
+    except error as e:
+        raise SpecialFileError(f"could not copy file '{file}' due to: {e}")
+    return True
+
+
+
+def copy_to_target_and_divide_by_filedate(file: Path, target_directory=None):
+    """Generate a destination for the offered file based on its' timestamp.
+        Destination is in the form root/year/month/filename.ext
+
+    Args:
+        file (Path): File to copy as a Path_obj
+        target_directory (Path, optional): defaults to current working directory.
+
+    Returns:
+        bool: Always returns True at this point.
     """
-    date, time = timestamp.split("_")  # split date from time
-    yy, mm, dd = date.split("-")
-    _hh = time[:2]
-    OP = f"{yy}/{mm}/{dd}/"
-    return OP
+    if target_directory == None:
+        target_directory = Path.cwd()
+    else:
+        if type(target_directory) != Path:
+            raise TypeError(f'target directory must be a valid Path, got {type(target_directory)}')
+    creation_date = file.stat().st_mtime # in windows this is closer to the oldest date on the file.
+    # st_ctime will be equal to the most recent time the file was copied from place to place.
+    date = timefstring(creation_date)
+    new_path = target_directory / f"{date.year}/{date.month:02}/"
+    new_path.mkdir(parents=True, exist_ok=True)
+    return copy_to_target(file.name, new_path)
+
+
+
+def copy_to_target_and_divide_by_dictionary(file: Path, target_directory=None, characters=None):
+    """Generate a destination for the offered file based on its' name.
+        Destination is in the form root/(first 'x' characters of filename)/filename.ext
+
+    Args:
+        file (Path): File to copy as a Path_obj
+        target_directory (Path, optional): root directory for destination.
+        characters (integer, optional): number of characters from filename to use.
+
+    Returns:
+        bool: status of copy process.
+    """
+    if characters == None:
+        characters = 1 # defaults to the first character of the filename.
+    else:
+        if type(characters) != int:
+            raise(f'characters value must be integer, got {type(characters)}')
+    if target_directory == None:
+        target_directory = Path.cwd() # defaults to the current working directory.
+    else:
+        if type(target_directory) != Path:
+            raise TypeError(f'target directory must be a valid Path, got {type(target_directory)}')
+    new_path = target_directory / f"{file.name[0:characters]}/"
+    new_path.mkdir(parents=True, exist_ok=True)
+    return copy_to_target(file.name, new_path)
+
+
+
+def check_and_validate(fname, target_directory=None, rename=None):
+    """Replace invalid characters in filename with underscore, combine with target_directory (optional)
+    and optionaly create a new filename that doesn't already exist at destination.  
+
+    Args:
+        fname (Path): filename to fix.
+        target_directory (Path, optional): defaults to current working directory.
+        rename (bool, optional): generates a name that is unique. Defaults to False.
+
+    Returns:
+        Path: Path object that is valid and does not exist.
+    """
+    if target_directory == None:
+        target_directory = Path.cwd() # defaults to the current working directory.
+    else:
+        if type(target_directory) != Path:
+            raise TypeError(f'target directory must be a valid Path, got {type(target_directory)}')
+    if rename == None:
+        rename = False # default
+    else:
+        if type(rename) != bool:
+            raise TypeError(f'rename must be Bool, got {type(rename)}')            
+    clean_name = clean_filename_str(fname)
+    target_directory.mkdir(parents=True, exist_ok=True)
+    OUT_PATH_HANDLE = Path(target_directory, clean_name)
+    if OUT_PATH_HANDLE.is_file():
+        if rename:
+            unique_name = new_name_if_exists(OUT_PATH_HANDLE)
+        else:
+            return None
+    return unique_name
 
 
 

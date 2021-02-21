@@ -1,16 +1,17 @@
 Metadata-Version: 2.1
 Name: CFSIV-utilities-package
-Version: 0.0.1
+Version: 0.0.2
 Summary: A collection of Time, Date, Filehandling and webscraping functions
 Home-page: https://github.com/conradstorz/utilities.git
 Author: Conrad Storz IV
 Author-email: conradstorz@gmail.com
 License: UNKNOWN
-Description: # Example Package
+Description: # Personal utilities for Conrad F Storz IV (CFSIV)
+        # instructions for packaging found at:
+        # https://packaging.python.org/tutorials/packaging-projects/
         
-        This is a simple example package. You can use
-        [Github-flavored Markdown](https://guides.github.com/features/mastering-markdown/)
-        to write your content.
+        This repository is uploaded to PyPi as "CFSIV-utilities-package"
+        
 Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
