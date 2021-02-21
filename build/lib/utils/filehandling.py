@@ -3,23 +3,24 @@
 """Standardize methods for file handling. 
     The functions include verifing filenames are safe for OS in use.
     Files are handled using the pathlib approach.
-    Data can be saved in flat CSV files from several types of data formats.
     Sub-Directory structures can be generated from timestamps.
-    CSV files get appended if they already exist.
+    Sub-Directory structures can be generated from filenames.
 """
 
 from os import error
+from loguru import logger
 from pathlib import Path
 import shutil as _shutil
 from shutil import SpecialFileError
 from time_strings import timefstring
 
 
-def clean_filename_str(fn):
-    """Replace invalid characters from provided string with underscores.
+def clean_filename_str(fn: str):
+    """Replace invalid characters from provided string.
         Note: '-' is invalid in windows if it is the last character in a name.
+        # TODO replace invalid characters with underscores.
     """
-    return Path("_".join(i for i in fn if i not in "\/:*?<>|-"))
+    return Path("".join(i for i in fn if i not in "\/:*?<>|-"))
 
 
 
@@ -124,8 +125,8 @@ def copy_to_target_and_divide_by_dictionary(file: Path, target_directory=None, c
 
 
 
-def check_and_validate(fname, target_directory=None, rename=None):
-    """Replace invalid characters in filename with underscore, combine with target_directory (optional)
+def check_and_validate_fname(fname, target_directory=None, rename=None):
+    """Remove invalid characters in filename, combine with target_directory (optional)
     and optionaly create a new filename that doesn't already exist at destination.  
 
     Args:
@@ -157,6 +158,27 @@ def check_and_validate(fname, target_directory=None, rename=None):
     return unique_name
 
 
+
+@logger.catch
+def Main():
+    data = ['qwerty~!@#$%^&*().ext', Path('qwerty~!@#$%^&().ext')]
+    reslt = clean_filename_str(data[0])
+    assert data[1] == reslt
+
+    testname = new_name_if_exists(Path('README.md'))
+    assert testname == Path('README(1).md')
+
+    # copy_to_target(
+
+    # copy_to_target_and_divide_by_filedate(
+
+    # copy_to_target_and_divide_by_dictionary(
+
+    # check_and_validate_fname(
+
+
+if __name__ == '__main__':
+    Main()
 
 # NOTES FOR USE OF pathlib
 
