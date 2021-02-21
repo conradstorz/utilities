@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="CFSIV_utilities_package", # Replace with your own username
+    name="CFSIV_utils", # Replace with your own username
     version="0.0.3",
     author="Conrad Storz IV",
     author_email="conradstorz@gmail.com",
