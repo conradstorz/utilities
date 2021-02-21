@@ -10,3 +10,4 @@ dist/
 .eggs/
 *.log
 LOGS/
+temp.py
