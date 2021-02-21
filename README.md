@@ -1,5 +1,10 @@
 # Personal utilities for Conrad F Storz IV (CFSIV)
-# instructions for packaging found at:
-# https://packaging.python.org/tutorials/packaging-projects/
 
-This repository is uploaded to PyPi as "CFSIV-utilities-package"
+useage:
+
+import cfsiv_utils.filehandling as fh
+import cfsiv_utils.time_strings as ts
+import cfsiv_utils.WebScraping as ws
+
+
+This repository is uploaded to PyPi as "CFSIV-utils"
