@@ -125,8 +125,8 @@ def copy_to_target_and_divide_by_dictionary(file: Path, target_directory=None, c
 
 
 
-def check_and_validate(fname, target_directory=None, rename=None):
-    """Replace invalid characters in filename with underscore, combine with target_directory (optional)
+def check_and_validate_fname(fname, target_directory=None, rename=None):
+    """Remove invalid characters in filename, combine with target_directory (optional)
     and optionaly create a new filename that doesn't already exist at destination.  
 
     Args:
@@ -168,13 +168,13 @@ def Main():
     testname = new_name_if_exists(Path('README.md'))
     assert testname == Path('README(1).md')
 
-    copy_to_target(
+    # copy_to_target(
 
-    copy_to_target_and_divide_by_filedate(
+    # copy_to_target_and_divide_by_filedate(
 
-    copy_to_target_and_divide_by_dictionary(
+    # copy_to_target_and_divide_by_dictionary(
 
-    check_and_validate(
+    # check_and_validate_fname(
 
 
 if __name__ == '__main__':
