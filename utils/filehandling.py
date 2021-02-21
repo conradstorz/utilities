@@ -9,17 +9,19 @@
 """
 
 from os import error
+from loguru import logger
 from pathlib import Path
 import shutil as _shutil
 from shutil import SpecialFileError
 from time_strings import timefstring
 
 
-def clean_filename_str(fn):
-    """Replace invalid characters from provided string with underscores.
+def clean_filename_str(fn: str):
+    """Replace invalid characters from provided string.
         Note: '-' is invalid in windows if it is the last character in a name.
+        # TODO replace invalid characters with underscores.
     """
-    return Path("_".join(i for i in fn if i not in "\/:*?<>|-"))
+    return Path("".join(i for i in fn if i not in "\/:*?<>|-"))
 
 
 
@@ -157,6 +159,20 @@ def check_and_validate(fname, target_directory=None, rename=None):
     return unique_name
 
 
+
+@logger.catch
+def Main():
+    data = ['qwerty~!@#$%^&*().ext', Path('qwerty~!@#$%^&().ext')]
+    reslt = clean_filename_str(data[0])
+    assert data[1] == reslt
+
+    testname = new_name_if_exists(Path('README.md'))
+    assert testname == Path('README(1).md')
+
+
+
+if __name__ == '__main__':
+    Main()
 
 # NOTES FOR USE OF pathlib
 
