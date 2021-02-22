@@ -12,7 +12,7 @@ from loguru import logger
 from pathlib import Path
 import shutil as _shutil
 from shutil import SpecialFileError
-from time_strings import timefstring
+from cfsiv_utils.time_strings import timefstring
 
 
 def clean_filename_str(fn: str):
