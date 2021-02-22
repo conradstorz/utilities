@@ -12,7 +12,47 @@ from loguru import logger
 from pathlib import Path
 import shutil as _shutil
 from shutil import SpecialFileError
-from cfsiv_utils.time_strings import timefstring
+from time_strings import timefstring
+
+
+
+def get_files(source_directory: Path, pattern=None):
+    """Returns a list of all files from directory matching optional pattern.
+
+    Args:
+        source_directory (Path): Relative or absolute reference to a directory.
+        pattern (str, optional): Filename matching pattern wildcards accepted. Defaults to '*'.
+
+    Raises:
+        TypeError: If optional inputs are out of bounds.
+
+    Returns:
+        list: A list of all files matching pattern from directory.
+    """
+    if pattern == None:
+        pattern = '*.*'
+    else:
+        if type(pattern) != str:
+            raise TypeError(f'pattern must be type string, got {type(pattern)}')
+    CURRENT_WORKING_DIRECTORY = Path.cwd()
+    SOURCE_DIRECTORY = source_directory.resolve()
+    if not(SOURCE_DIRECTORY.is_dir()):
+        logger.exception(f'Source_directory must be a dir. Got {source_directory}')
+    if SOURCE_DIRECTORY != CURRENT_WORKING_DIRECTORY:
+        try:
+            Path.chdir(SOURCE_DIRECTORY)
+            CURRENT_WORKING_DIRECTORY = Path.cwd()
+        except error as e:
+            logger.exception(f'Could not access source directory: {e}')
+    if SOURCE_DIRECTORY != CURRENT_WORKING_DIRECTORY:
+        logger.exception('Unknown change directory to source error.')
+    try:
+        files = list(SOURCE_DIRECTORY.rglob(pattern))
+    except error as e:
+        logger.exception(f'Error locating files matching pattern: {pattern}')
+        files = []
+    return files
+
 
 
 def clean_filename_str(fn: str):
@@ -161,6 +201,10 @@ def check_and_validate_fname(fname, target_directory=None, rename=None):
 
 @logger.catch
 def Main():
+    filelist = get_files(Path('.'), pattern='*.md')
+    print(filelist)
+
+
     data = ['qwerty~!@#$%^&*().ext', Path('qwerty~!@#$%^&().ext')]
     reslt = clean_filename_str(data[0])
     assert data[1] == reslt
