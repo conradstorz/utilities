@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="CFSIV_utils-Conradical",
-    version="0.0.6",
+    version="0.0.7",
     author="Conrad Storz IV",
     author_email="conradstorz@gmail.com",
     description="A collection of Time, Date, Filehandling and webscraping functions",
