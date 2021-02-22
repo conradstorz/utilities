@@ -4,8 +4,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="CFSIV_utils", # Replace with your own username
-    version="0.0.5",
+    name="CFSIV_utils-Conradical",
+    version="0.0.6",
     author="Conrad Storz IV",
     author_email="conradstorz@gmail.com",
     description="A collection of Time, Date, Filehandling and webscraping functions",
