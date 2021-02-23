@@ -35,6 +35,9 @@ def get_files(source_directory: Path, pattern=None):
     else:
         if type(pattern) != str:
             raise TypeError(f'pattern must be type string, got {type(pattern)}')
+    if type(source_directory) != Path:
+        logger.debug(f'source_directory must be type Path. Got: {type(source_directory)}')
+        source_directory = Path(source_directory)        
     ORIGINAL_WORKING_DIRECTORY = Path.cwd()
     SOURCE_DIRECTORY = source_directory.resolve()
     if not(SOURCE_DIRECTORY.is_dir()):
@@ -55,10 +58,12 @@ def get_files(source_directory: Path, pattern=None):
         logger.error(f'Error locating files matching pattern: {pattern}')
         files = []
     # TODO return cwd to original location.
+    """
     try:
         Change_Directory(ORIGINAL_WORKING_DIRECTORY)
     except error as e:
         logger.error(f'Could not restore original directory: {e}')    
+    """
     return files
 
 
