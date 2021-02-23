@@ -58,12 +58,10 @@ def get_files(source_directory: Path, pattern=None):
         logger.error(f'Error locating files matching pattern: {pattern}')
         files = []
     # TODO return cwd to original location.
-    """
     try:
         Change_Directory(ORIGINAL_WORKING_DIRECTORY)
     except error as e:
         logger.error(f'Could not restore original directory: {e}')    
-    """
     return files
 
 
