@@ -9,6 +9,7 @@ from datetime import datetime, date, timezone, timedelta
 from time import sleep
 import pytz
 from loguru import logger
+from dateparser.search import search_dates
 
 
 tz_UTC = pytz.timezone("UTC")
@@ -132,6 +133,35 @@ def apply_logical_year_value_to_monthday_pair(datestring, scrape_datestamp):
     return corrected_datestamp
 
 
+@logger.catch
+def extract_date(text_list):
+    """Searches a text string for a date reference and returns a datetime object.
+
+    Args:
+        text_list (list): A list of any length of strings of any length.
+
+    Raises:
+        TypeError: Input must be iterable
+        dateutil.parser._parser.ParserError: No decipherable date found.
+
+    Returns:
+        datetime.datetime: Datetime Object
+    """
+    if type(text_list) != list:
+        raise TypeError("Argument must be a list.")
+
+    for t in text_list:
+        # TODO try/except?
+        found = search_dates(t)
+        if found != None:
+            for itm in found:
+                s, d = itm
+                if len(s) == 8 and s[2] == ":" == s[5]:
+                    return d
+    logger.error(f"No parseable date found.\n{text_list}")
+    # NOTE: Wanted to raise an exception here but could not capture it for some reason
+    # with try/except outside of this function.
+    return None
 
 
 # Notes:

@@ -102,7 +102,7 @@ def get_files(source_directory: Path, pattern=None):
 
 def clean_filename_str(fn: str):
     """Replace invalid characters from provided string.
-        Note: '-' is invalid in windows if it is the last character in a name.
+        Note: '-' is invalid in windows if it is the last character in a name following a space character.
         # TODO replace invalid characters with underscores.
     """
     return Path("".join(i for i in fn if i not in "\/:*?<>|-"))
@@ -157,6 +157,21 @@ def copy_to_target(file: Path, target_diectory=None):
 
 
 
+def create_timestamp_subdirectory_Structure(file: Path, target_directory=None):
+    if target_directory == None:
+        target_directory = Path.cwd()
+    else:
+        if type(target_directory) != Path:
+            raise TypeError(f'target directory must be a valid Path, got {type(target_directory)}') 
+    creation_date = file.stat().st_mtime # in windows this is closer to the oldest date on the file.
+    # st_ctime will be equal to the most recent time the file was copied from place to place.
+    date = timefstring(creation_date)
+    new_path = target_directory / f"{date.year}/{date.month:02}/"
+    new_path.mkdir(parents=True, exist_ok=True)    
+    return new_path
+
+
+
 def copy_to_target_and_divide_by_filedate(file: Path, target_directory=None):
     """Generate a destination for the offered file based on its' timestamp.
         Destination is in the form root/year/month/filename.ext
@@ -172,12 +187,8 @@ def copy_to_target_and_divide_by_filedate(file: Path, target_directory=None):
         target_directory = Path.cwd()
     else:
         if type(target_directory) != Path:
-            raise TypeError(f'target directory must be a valid Path, got {type(target_directory)}')
-    creation_date = file.stat().st_mtime # in windows this is closer to the oldest date on the file.
-    # st_ctime will be equal to the most recent time the file was copied from place to place.
-    date = timefstring(creation_date)
-    new_path = target_directory / f"{date.year}/{date.month:02}/"
-    new_path.mkdir(parents=True, exist_ok=True)
+            raise TypeError(f'target directory must be a valid Path, got {type(target_directory)}')    
+    new_path = create_timestamp_subdirectory_Structure(file, target_directory=target_directory)
     return copy_to_target(file.name, new_path)
 
 
@@ -210,7 +221,7 @@ def copy_to_target_and_divide_by_dictionary(file: Path, target_directory=None, c
 
 
 
-def check_and_validate_fname(fname, target_directory=None, rename=None):
+def check_and_validate_fname(fname, target_directory=None):
     """Remove invalid characters in filename, combine with target_directory (optional)
     and optionaly create a new filename that doesn't already exist at destination.  
 
@@ -220,27 +231,16 @@ def check_and_validate_fname(fname, target_directory=None, rename=None):
         rename (bool, optional): generates a name that is unique. Defaults to False.
 
     Returns:
-        Path: Path object that is valid and does not exist.
+        Path: Path object that is valid.
     """
     if target_directory == None:
         target_directory = Path.cwd() # defaults to the current working directory.
     else:
         if type(target_directory) != Path:
-            raise TypeError(f'target directory must be a valid Path, got {type(target_directory)}')
-    if rename == None:
-        rename = False # default
-    else:
-        if type(rename) != bool:
-            raise TypeError(f'rename must be Bool, got {type(rename)}')            
+            logger.debug(f'target directory must be a valid Path, got {type(target_directory)}')
     clean_name = clean_filename_str(fname)
     target_directory.mkdir(parents=True, exist_ok=True)
-    OUT_PATH_HANDLE = Path(target_directory, clean_name)
-    if OUT_PATH_HANDLE.is_file():
-        if rename:
-            unique_name = new_name_if_exists(OUT_PATH_HANDLE)
-        else:
-            return None
-    return unique_name
+    return Path(target_directory, clean_name)
 
 
 

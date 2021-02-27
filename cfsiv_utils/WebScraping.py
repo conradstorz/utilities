@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 
 from loguru import logger
 from pathlib import Path
-from filehandling import check_and_validate
+from filehandling import check_and_validate_fname
 from time_strings import UTC_NOW_STRING
 
 
@@ -70,7 +70,7 @@ def save_html_text(txt):
     dirobj = Path(Path.cwd(), 'raw_web_scrapes')
     dirobj.mkdir(parents=True, exist_ok=True)   
     # ensure that filename only contains valid characters 
-    pathobj = check_and_validate(filename, dirobj)
+    pathobj = check_and_validate_fname(filename, dirobj)
     with open(pathobj, "w") as txtfile:
         txtfile.write(str(txt))
     return None
