@@ -149,9 +149,14 @@ def extract_date(text_list):
     if type(text_list) != list:
         raise TypeError("Argument must be a list.")
     results = []
-    for t in text_list:
-        # TODO try/except?
-        found = search_dates(t)
+    # initializing bad_chars_list
+    bad_chars = ['\n', "*"]    
+    for txt in text_list:
+        # clean garbage characters from strings
+        # using replace() to remove bad_chars 
+        for chr in bad_chars :
+            txt = txt.replace(chr, '')        
+        found = search_dates(txt)
         if found != None:
             for itm in found:
                 s, d = itm
