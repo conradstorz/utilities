@@ -12,8 +12,8 @@ from bs4 import BeautifulSoup
 
 from loguru import logger
 from pathlib import Path
-from filehandling import check_and_validate_fname
-from time_strings import UTC_NOW_STRING
+from cfsiv_utils.filehandling import check_and_validate_fname
+from cfsiv_utils.time_strings import UTC_NOW_STRING
 
 
 @logger.catch
