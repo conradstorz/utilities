@@ -135,21 +135,20 @@ def apply_logical_year_value_to_monthday_pair(datestring, scrape_datestamp):
 
 @logger.catch
 def extract_date(text_list):
-    """Searches a text string for a date reference and returns a datetime object.
-
+    """Searches text strings for a date reference and returns a list of datetime objects.
+        If no date can be found then 'None' is placed in output list.
     Args:
         text_list (list): A list of any length of strings of any length.
 
     Raises:
-        TypeError: Input must be iterable
-        dateutil.parser._parser.ParserError: No decipherable date found.
+        TypeError: Input must be iterable.
 
     Returns:
-        datetime.datetime: Datetime Object
+        list: A list of equal length containing Datetime Objects and Nones.
     """
     if type(text_list) != list:
         raise TypeError("Argument must be a list.")
-
+    results = []
     for t in text_list:
         # TODO try/except?
         found = search_dates(t)
@@ -157,11 +156,10 @@ def extract_date(text_list):
             for itm in found:
                 s, d = itm
                 if len(s) == 8 and s[2] == ":" == s[5]:
-                    return d
-    logger.error(f"No parseable date found.\n{text_list}")
-    # NOTE: Wanted to raise an exception here but could not capture it for some reason
-    # with try/except outside of this function.
-    return None
+                    results.append(d)
+        else:
+            results.append(None)
+    return results
 
 
 # Notes:
