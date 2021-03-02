@@ -61,7 +61,7 @@ if __name__ == "__main__":
         sleep(2)
         print()
 
-
+@logger.catch
 def apply_logical_year_value_to_monthday_pair(datestring, scrape_datestamp):
     """Given a month and day apply the rule that it must represent a day in the near past or future.
     This problem presents itself when gathering data from the National Weather Service.
@@ -157,12 +157,15 @@ def extract_date(text_list):
         for chr in bad_chars :
             txt = txt.replace(chr, '')        
         found = search_dates(txt)
+        logger.debug(f'date search results: {found}')
         if found != None:
             for itm in found:
-                s, d = itm
-                if len(s) == 8 and s[2] == ":" == s[5]:
-                    results.append(d)
+                string, datetimeobj = itm
+                if ':' in string:
+                    logger.debug(f'Found date in: {txt}')
+                    results.append(datetimeobj)
         else:
+            logger.debug(f'No date found in: {txt}')
             results.append(None)
     return results
 
