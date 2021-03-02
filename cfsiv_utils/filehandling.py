@@ -68,10 +68,12 @@ def get_files(source_directory: Path, pattern=None):
         pattern = '*.*'
     else:
         if type(pattern) != str:
-            raise TypeError(f'pattern must be type string, got {type(pattern)}')
+            logger.error(f'pattern must be type string, got {type(pattern)}')
+            pattern = '*.*'
     if type(source_directory) != Path:
-        logger.debug(f'source_directory must be type Path. Got: {type(source_directory)}')
+        logger.debug(f'source_directory should be type Path. Got: {type(source_directory)}')
         source_directory = Path(source_directory)        
+    logger.debug(f'source_directory in use is: {source_directory}')
     ORIGINAL_WORKING_DIRECTORY = Path.cwd()
     SOURCE_DIRECTORY = source_directory.resolve()
     if not(SOURCE_DIRECTORY.is_dir()):
