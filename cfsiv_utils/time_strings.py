@@ -150,7 +150,7 @@ def extract_date(text_list):
         raise TypeError("Argument must be a list.")
     results = []
     # initializing bad_chars_list
-    bad_chars = ['\n', "*"]    
+    bad_chars = ['\\n', "*"] # '\n' needed '\' escaped '\\' to function as desired to remove '\n'.
     for txt in text_list:
         # clean garbage characters from strings
         # using replace() to remove bad_chars 
