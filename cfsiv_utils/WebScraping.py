@@ -58,7 +58,7 @@ def log_error(e):
     """
     print(e)
 
-
+@logger.catch
 def save_html_text(txt):
     """Place 'txt' in a subdirectory in the current working directory 
     under a filename based on the current time.
