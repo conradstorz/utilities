@@ -50,7 +50,7 @@ def write_csv(data, filename="temp.csv", directory="CSV_DATA", use_subs=False):
     return
 
 
-
+@logger.catch
 def get_files(source_directory: Path, pattern=None):
     """Returns a list of all files from directory matching optional pattern.
 
@@ -99,7 +99,7 @@ def get_files(source_directory: Path, pattern=None):
     return files
 
 
-
+@logger.catch
 def clean_filename_str(fn: str):
     """Replace invalid characters from provided string.
         Note: '-' is invalid in windows if it is the last character in a name following a space character.
@@ -108,7 +108,7 @@ def clean_filename_str(fn: str):
     return Path("".join(i for i in fn if i not in "\/:*?<>|-"))
 
 
-
+@logger.catch
 def new_name_if_exists(file: Path):
     """Make a new filename that avoids name collisions.
         example: filename(xx).ext where xx is incremented until 
@@ -130,7 +130,7 @@ def new_name_if_exists(file: Path):
             i += 1
 
 
-
+@logger.catch
 def copy_to_target(file: Path, target_diectory=None):
     """Copy offered file to new location
         while ensuring not to overwrite any existing file.
@@ -156,7 +156,7 @@ def copy_to_target(file: Path, target_diectory=None):
     return True
 
 
-
+@logger.catch
 def create_timestamp_subdirectory_Structure(file: Path, target_directory=None):
     if target_directory == None:
         target_directory = Path.cwd()
@@ -171,7 +171,7 @@ def create_timestamp_subdirectory_Structure(file: Path, target_directory=None):
     return new_path
 
 
-
+@logger.catch
 def copy_to_target_and_divide_by_filedate(file: Path, target_directory=None):
     """Generate a destination for the offered file based on its' timestamp.
         Destination is in the form root/year/month/filename.ext
@@ -192,7 +192,7 @@ def copy_to_target_and_divide_by_filedate(file: Path, target_directory=None):
     return copy_to_target(file.name, new_path)
 
 
-
+@logger.catch
 def copy_to_target_and_divide_by_dictionary(file: Path, target_directory=None, characters=None):
     """Generate a destination for the offered file based on its' name.
         Destination is in the form root/(first 'x' characters of filename)/filename.ext
@@ -220,7 +220,7 @@ def copy_to_target_and_divide_by_dictionary(file: Path, target_directory=None, c
     return copy_to_target(file.name, new_path)
 
 
-
+@logger.catch
 def check_and_validate_fname(fname, target_directory=None):
     """Remove invalid characters in filename, combine with target_directory (optional)
     and optionaly create a new filename that doesn't already exist at destination.  
