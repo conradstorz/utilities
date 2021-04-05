@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Standardize methods for file handling. 
     The functions include verifing filenames are safe for OS in use.
