@@ -4,12 +4,16 @@
 """Standardize time strings and datetime objects used in a project.
 """
 
-
-from datetime import datetime, date, timezone, timedelta
+import datetime as dt
+# from datetime import datetime, date, timezone, timedelta
+import dateutil.parser as dtp
+# from dateutil.parser import parse, ParserError
+import dateparser.search as dts
+# from dateparser.search import search_dates
 from time import sleep
 import pytz
 from loguru import logger
-from dateparser.search import search_dates
+
 
 
 tz_UTC = pytz.timezone("UTC")
@@ -28,10 +32,10 @@ def timefstring(dtobj, tz_name=True):
 
 
 def LOCAL_TODAY():
-    return  date.today()
+    return  dt.date.today()
 
 def UTC_NOW():
-    return datetime.now(tz_UTC)
+    return dt.datetime.now(tz_UTC)
 
 def LOCAL_CURRENT_YEAR():
     return str(LOCAL_TODAY().year)
@@ -43,7 +47,7 @@ def UTC_NOW_STRING():
     return timefstring(UTC_NOW())
 
 def LOCAL_NOW():
-    return datetime.now(tz_LOCAL)
+    return dt.datetime.now(tz_LOCAL)
 
 def LOCAL_NOW_STRING():
     return timefstring(LOCAL_NOW())
@@ -76,12 +80,12 @@ def apply_logical_year_value_to_monthday_pair(datestring, scrape_datestamp):
     Returns:
         datetime.object: fully qualified date with the corrected year.
     """
-    from dateutil.parser import parse, ParserError
+   
     try:
-        supplied_date = parse(datestring)
-    except ParserError as e:
+        supplied_date = dtp.parse(datestring)
+    except dtp.ParserError as e:
         print(f'{e}: Could not parse datestring provided.')
-        raise ParserError(e)
+        raise dtp.ParserError(e)
 
     # All work is done with timezone aware objects.
     supplied_date = supplied_date.replace(tzinfo=pytz.UTC)
@@ -104,16 +108,16 @@ def apply_logical_year_value_to_monthday_pair(datestring, scrape_datestamp):
     dd = int(su_dy)
 
     # Create a UTC timezone instance
-    UTC_TimeDelta = timedelta(hours=0)
-    tzUTC = timezone(UTC_TimeDelta, name="UTC")
+    UTC_TimeDelta = dt.timedelta(hours=0)
+    tzUTC = dt.timezone(UTC_TimeDelta, name="UTC")
 
     # create list of possible dates
     dates = []
-    offered_datestamp = datetime(offered_year,mm,dd,1,0,0,0,tzUTC)
+    offered_datestamp = dt.datetime(offered_year,mm,dd,1,0,0,0,tzUTC)
     dates.append(offered_datestamp)
-    prev_datestamp = datetime(prev_year,mm,dd,1,0,0,0,tzUTC)
+    prev_datestamp = dt.datetime(prev_year,mm,dd,1,0,0,0,tzUTC)
     dates.append(prev_datestamp)
-    next_datestamp = datetime(next_year,mm,dd,1,0,0,0,tzUTC)
+    next_datestamp = dt.datetime(next_year,mm,dd,1,0,0,0,tzUTC)
     dates.append(next_datestamp)
 
     # Create a dict of dates keyed on the number of days elapsed.
@@ -144,7 +148,7 @@ def extract_date(text_list):
         TypeError: Input must be iterable.
 
     Returns:
-        list: A list of equal length containing Datetime Objects and Nones.
+        list: A list of equal length to input containing Datetime Objects and Nones.
     """
     if type(text_list) != list:
         raise TypeError("Argument must be a list.")
@@ -156,7 +160,7 @@ def extract_date(text_list):
         # using replace() to remove bad_chars 
         for chr in bad_chars :
             txt = txt.replace(chr, '')        
-        found = search_dates(txt)
+        found = dts.search_dates(txt)
         logger.debug(f'date search results: {found}')
         if found != None:
             for itm in found:
