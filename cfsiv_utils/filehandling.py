@@ -242,6 +242,33 @@ def check_and_validate_fname(fname, target_directory=None):
     return Path(target_directory, clean_name)
 
 
+@logger.catch
+def remove_file(file_path: Path):
+    """Attempts to delete the provided Pathobj.
+
+    Args:
+        file_path (Path): Item to be deleted.
+
+    Returns:
+        Bool: True/False successful result.
+    """
+    logger.info(f"Attempting to remove file: '{file_path.name}' ")
+
+    if file_path.exists():
+        try:
+            file_path.unlink()
+        except OSError as e:
+            logger.warning(f"Error: {e}")
+            return False
+        logger.info(f"Success removing '{file_path.name}' ")
+        return True
+
+    else:
+        logger.info(f"Sorry, could not find '{file_path.name}' ")
+
+    return False
+
+
 
 @logger.catch
 def Main():
