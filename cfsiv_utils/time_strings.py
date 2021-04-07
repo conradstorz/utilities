@@ -165,7 +165,7 @@ def extract_date(text_list):
         if found != None:
             for itm in found:
                 string, datetimeobj = itm
-                if ':' in string:
+                if ':' in string: # use the entry that contains the full date and time.
                     logger.debug(f'Found date in: {txt}')
                     results.append(datetimeobj)
         else:
