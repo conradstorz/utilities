@@ -55,7 +55,7 @@ def log_error(e):
     This function just prints them, but you can
     make it do anything.
     """
-    print(e)
+    logger.error(e)
 
 
 @logger.catch

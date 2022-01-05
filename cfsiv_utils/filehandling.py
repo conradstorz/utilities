@@ -291,11 +291,11 @@ def remove_file(file_path: Path):
 @logger.catch
 def Main():
     try:
-        filelist = get_files(Path("Q:"), pattern="*takeout*.zip")
+        filelist = get_files(Path("C:"), pattern="*takeout*.zip")
     except FileNotFoundError as e:
         filelist = []
-        print(f"Bad Path: {e}")
-    print(len(filelist))
+        logger.error(f"Bad Path: {e}")
+    logger.info(f'Number of matching files={len(filelist)}')
 
     data = ["qwerty~!@#$%^&*().ext", Path("qwerty~!@#$%^&().ext")]
     reslt = clean_filename_str(data[0])
