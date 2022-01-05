@@ -16,10 +16,9 @@ from shutil import SpecialFileError
 from cfsiv_utils.time_strings import timefstring
 
 
-
 @logger.catch
 def write_csv(data, filename="temp.csv", directory="CSV_DATA", use_subs=False):
-    """'data' is expected to be a list of dicts 
+    """'data' is expected to be a list of dicts
     Take data and write all fields to storage as csv with headers from keys.
     if filename already exists automatically append to end of file if headers match.
 
@@ -34,7 +33,7 @@ def write_csv(data, filename="temp.csv", directory="CSV_DATA", use_subs=False):
     """
     # create csv file path
     dirobj = Path(Path.cwd(), directory)
-    dirobj.mkdir(parents=True, exist_ok=True)    
+    dirobj.mkdir(parents=True, exist_ok=True)
     pathobj = check_and_validate_fname(filename, dirobj)
 
     if not pathobj.exists():
@@ -44,7 +43,9 @@ def write_csv(data, filename="temp.csv", directory="CSV_DATA", use_subs=False):
             csv_obj.writerow(headers)
     with open(pathobj, "a+", newline="") as csvfile:
         csv_obj = csv.writer(csvfile, delimiter=",")
-        for item in data:  # data should be the list of dicts contaning observations/forecasts.
+        for (
+            item
+        ) in data:  # data should be the list of dicts contaning observations/forecasts.
             csv_obj.writerow(item.values())
     return
 
@@ -64,45 +65,47 @@ def get_files(source_directory: Path, pattern=None):
         list: A list of all files matching pattern from directory.
     """
     if pattern == None:
-        pattern = '*.*'
+        pattern = "*.*"
     else:
         if type(pattern) != str:
-            raise TypeError(f'pattern must be type string, got {type(pattern)}')
+            raise TypeError(f"pattern must be type string, got {type(pattern)}")
     if type(source_directory) != Path:
-        logger.debug(f'source_directory must be type Path. Got: {type(source_directory)}')
-        source_directory = Path(source_directory)        
+        logger.debug(
+            f"source_directory must be type Path. Got: {type(source_directory)}"
+        )
+        source_directory = Path(source_directory)
     ORIGINAL_WORKING_DIRECTORY = Path.cwd()
     SOURCE_DIRECTORY = source_directory.resolve()
-    if not(SOURCE_DIRECTORY.is_dir()):
-        logger.error(f'Source_directory must be a valid dir. Got {source_directory}')
-    NEW_WORKING_DIRECTORY = Path.cwd()    
+    if not (SOURCE_DIRECTORY.is_dir()):
+        logger.error(f"Source_directory must be a valid dir. Got {source_directory}")
+    NEW_WORKING_DIRECTORY = Path.cwd()
     if SOURCE_DIRECTORY != ORIGINAL_WORKING_DIRECTORY:
         try:
             Change_Directory(SOURCE_DIRECTORY)
             NEW_WORKING_DIRECTORY = Path.cwd()
         except error as e:
-            logger.error(f'Could not access source directory: {e}')
+            logger.error(f"Could not access source directory: {e}")
     if SOURCE_DIRECTORY != NEW_WORKING_DIRECTORY:
-        logger.error('Unknown change directory to source error.')
-        raise FileNotFoundError(f'Could not access source_Path: {source_directory}')
+        logger.error("Unknown change directory to source error.")
+        raise FileNotFoundError(f"Could not access source_Path: {source_directory}")
     try:
         files = list(SOURCE_DIRECTORY.rglob(pattern))
     except error as e:
-        logger.error(f'Error locating files matching pattern: {pattern}')
+        logger.error(f"Error locating files matching pattern: {pattern}")
         files = []
     # TODO return cwd to original location.
     try:
         Change_Directory(ORIGINAL_WORKING_DIRECTORY)
     except error as e:
-        logger.error(f'Could not restore original directory: {e}')    
+        logger.error(f"Could not restore original directory: {e}")
     return files
 
 
 @logger.catch
 def clean_filename_str(fn: str):
     """Replace invalid characters from provided string.
-        Note: '-' is invalid in windows if it is the last character in a name following a space character.
-        # TODO replace invalid characters with underscores.
+    Note: '-' is invalid in windows if it is the last character in a name following a space character.
+    # TODO replace invalid characters with underscores.
     """
     return Path("".join(i for i in fn if i not in "\/:*?<>|-"))
 
@@ -110,14 +113,14 @@ def clean_filename_str(fn: str):
 @logger.catch
 def new_name_if_exists(file: Path):
     """Make a new filename that avoids name collisions.
-        example: filename(xx).ext where xx is incremented until 
-        unused filename is created.
+    example: filename(xx).ext where xx is incremented until
+    unused filename is created.
 
-        Args:
-            file (Path): proposed unique filename.
+    Args:
+        file (Path): proposed unique filename.
 
-        Returns:
-            Path_obj: Guaranteed unique filename.
+    Returns:
+        Path_obj: Guaranteed unique filename.
     """
     new_name = file
     i = 1
@@ -146,7 +149,9 @@ def copy_to_target(file: Path, target_diectory=None):
         target_diectory = Path.cwd()
     else:
         if type(target_diectory) != Path:
-            raise FileNotFoundError(f'target_directory must be type Path, got {type(target_diectory)}')
+            raise FileNotFoundError(
+                f"target_directory must be type Path, got {type(target_diectory)}"
+            )
     new_file = new_name_if_exists(target_diectory / file.name)
     try:
         _shutil.copy2(file, new_file)
@@ -161,12 +166,16 @@ def create_timestamp_subdirectory_Structure(file: Path, target_directory=None):
         target_directory = Path.cwd()
     else:
         if type(target_directory) != Path:
-            raise TypeError(f'target directory must be a valid Path, got {type(target_directory)}') 
-    creation_date = file.stat().st_mtime # in windows this is closer to the oldest date on the file.
+            raise TypeError(
+                f"target directory must be a valid Path, got {type(target_directory)}"
+            )
+    creation_date = (
+        file.stat().st_mtime
+    )  # in windows this is closer to the oldest date on the file.
     # st_ctime will be equal to the most recent time the file was copied from place to place.
     date = timefstring(creation_date)
     new_path = target_directory / f"{date.year}/{date.month:02}/"
-    new_path.mkdir(parents=True, exist_ok=True)    
+    new_path.mkdir(parents=True, exist_ok=True)
     return new_path
 
 
@@ -186,13 +195,19 @@ def copy_to_target_and_divide_by_filedate(file: Path, target_directory=None):
         target_directory = Path.cwd()
     else:
         if type(target_directory) != Path:
-            raise TypeError(f'target directory must be a valid Path, got {type(target_directory)}')    
-    new_path = create_timestamp_subdirectory_Structure(file, target_directory=target_directory)
+            raise TypeError(
+                f"target directory must be a valid Path, got {type(target_directory)}"
+            )
+    new_path = create_timestamp_subdirectory_Structure(
+        file, target_directory=target_directory
+    )
     return copy_to_target(file.name, new_path)
 
 
 @logger.catch
-def copy_to_target_and_divide_by_dictionary(file: Path, target_directory=None, characters=None):
+def copy_to_target_and_divide_by_dictionary(
+    file: Path, target_directory=None, characters=None
+):
     """Generate a destination for the offered file based on its' name.
         Destination is in the form root/(first 'x' characters of filename)/filename.ext
 
@@ -205,15 +220,17 @@ def copy_to_target_and_divide_by_dictionary(file: Path, target_directory=None, c
         bool: status of copy process.
     """
     if characters == None:
-        characters = 1 # defaults to the first character of the filename.
+        characters = 1  # defaults to the first character of the filename.
     else:
         if type(characters) != int:
-            raise(f'characters value must be integer, got {type(characters)}')
+            raise (f"characters value must be integer, got {type(characters)}")
     if target_directory == None:
-        target_directory = Path.cwd() # defaults to the current working directory.
+        target_directory = Path.cwd()  # defaults to the current working directory.
     else:
         if type(target_directory) != Path:
-            raise TypeError(f'target directory must be a valid Path, got {type(target_directory)}')
+            raise TypeError(
+                f"target directory must be a valid Path, got {type(target_directory)}"
+            )
     new_path = target_directory / f"{file.name[0:characters]}/"
     new_path.mkdir(parents=True, exist_ok=True)
     return copy_to_target(file.name, new_path)
@@ -222,7 +239,7 @@ def copy_to_target_and_divide_by_dictionary(file: Path, target_directory=None, c
 @logger.catch
 def check_and_validate_fname(fname, target_directory=None):
     """Remove invalid characters in filename, combine with target_directory (optional)
-    and optionaly create a new filename that doesn't already exist at destination.  
+    and optionaly create a new filename that doesn't already exist at destination.
 
     Args:
         fname (Path): filename to fix.
@@ -233,10 +250,12 @@ def check_and_validate_fname(fname, target_directory=None):
         Path: Path object that is valid.
     """
     if target_directory == None:
-        target_directory = Path.cwd() # defaults to the current working directory.
+        target_directory = Path.cwd()  # defaults to the current working directory.
     else:
         if type(target_directory) != Path:
-            logger.debug(f'target directory must be a valid Path, got {type(target_directory)}')
+            logger.debug(
+                f"target directory must be a valid Path, got {type(target_directory)}"
+            )
     clean_name = clean_filename_str(fname)
     target_directory.mkdir(parents=True, exist_ok=True)
     return Path(target_directory, clean_name)
@@ -269,23 +288,21 @@ def remove_file(file_path: Path):
     return False
 
 
-
 @logger.catch
 def Main():
     try:
-        filelist = get_files(Path('Q:'), pattern='*takeout*.zip')
+        filelist = get_files(Path("Q:"), pattern="*takeout*.zip")
     except FileNotFoundError as e:
         filelist = []
-        print(f'Bad Path: {e}')
+        print(f"Bad Path: {e}")
     print(len(filelist))
 
-
-    data = ['qwerty~!@#$%^&*().ext', Path('qwerty~!@#$%^&().ext')]
+    data = ["qwerty~!@#$%^&*().ext", Path("qwerty~!@#$%^&().ext")]
     reslt = clean_filename_str(data[0])
     assert data[1] == reslt
 
-    testname = new_name_if_exists(Path('README.md'))
-    assert testname == Path('README(1).md')
+    testname = new_name_if_exists(Path("README.md"))
+    assert testname == Path("README(1).md")
 
     # copy_to_target(
 
@@ -296,7 +313,7 @@ def Main():
     # check_and_validate_fname(
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     Main()
 
 # NOTES FOR USE OF pathlib
@@ -373,4 +390,3 @@ if __name__ == '__main__':
 # Example of file deletion by pathlib
 # pathobj = Path("demo/testfile.txt")
 # pathobj.unlink()
-

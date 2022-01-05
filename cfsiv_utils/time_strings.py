@@ -5,15 +5,17 @@
 """
 
 import datetime as dt
+
 # from datetime import datetime, date, timezone, timedelta
 import dateutil.parser as dtp
+
 # from dateutil.parser import parse, ParserError
 import dateparser.search as dts
+
 # from dateparser.search import search_dates
 from time import sleep
 import pytz
 from loguru import logger
-
 
 
 tz_UTC = pytz.timezone("UTC")
@@ -28,26 +30,32 @@ def timefstring(dtobj, tz_name=True):
     if tz_name:
         return f'{dtobj.strftime("%Y-%m-%d_%H:%M:%S%Z")}'
     else:
-        return f'{dtobj.strftime("%Y-%m-%d_%H:%M:%S")}NTZ' #NTZ = Naive Time Zone
+        return f'{dtobj.strftime("%Y-%m-%d_%H:%M:%S")}NTZ'  # NTZ = Naive Time Zone
 
 
 def LOCAL_TODAY():
-    return  dt.date.today()
+    return dt.date.today()
+
 
 def UTC_NOW():
     return dt.datetime.now(tz_UTC)
 
+
 def LOCAL_CURRENT_YEAR():
     return str(LOCAL_TODAY().year)
+
 
 def LOCAL_TODAY_STRING():
     return LOCAL_TODAY().strftime("%Y-%m-%d")
 
+
 def UTC_NOW_STRING():
     return timefstring(UTC_NOW())
 
+
 def LOCAL_NOW():
     return dt.datetime.now(tz_LOCAL)
+
 
 def LOCAL_NOW_STRING():
     return timefstring(LOCAL_NOW())
@@ -58,12 +66,19 @@ if __name__ == "__main__":
         print(f"LOCAL TODAY: {LOCAL_TODAY()} type: {type(LOCAL_TODAY())}")
         print(f"UTC NOW: {UTC_NOW()} type: {type(UTC_NOW())}")
         print(f"LOCAL NOW: {LOCAL_NOW()} type: {type(LOCAL_NOW())}")
-        print(f"LOCAL CURRENT_YEAR: {LOCAL_CURRENT_YEAR()} type: {type(LOCAL_CURRENT_YEAR())}")
-        print(f"LOCAL TODAY_STRING: {LOCAL_TODAY_STRING()} type: {type(LOCAL_TODAY_STRING())}")
+        print(
+            f"LOCAL CURRENT_YEAR: {LOCAL_CURRENT_YEAR()} type: {type(LOCAL_CURRENT_YEAR())}"
+        )
+        print(
+            f"LOCAL TODAY_STRING: {LOCAL_TODAY_STRING()} type: {type(LOCAL_TODAY_STRING())}"
+        )
         print(f"UTC NOW_STRING: {UTC_NOW_STRING()} type: {type(UTC_NOW_STRING())}")
-        print(f"LOCAL NOW_STRING: {LOCAL_NOW_STRING()} type: {type(LOCAL_NOW_STRING())}")
+        print(
+            f"LOCAL NOW_STRING: {LOCAL_NOW_STRING()} type: {type(LOCAL_NOW_STRING())}"
+        )
         sleep(2)
         print()
+
 
 @logger.catch
 def apply_logical_year_value_to_monthday_pair(datestring, scrape_datestamp):
@@ -80,11 +95,11 @@ def apply_logical_year_value_to_monthday_pair(datestring, scrape_datestamp):
     Returns:
         datetime.object: fully qualified date with the corrected year.
     """
-   
+
     try:
         supplied_date = dtp.parse(datestring)
     except dtp.ParserError as e:
-        print(f'{e}: Could not parse datestring provided.')
+        print(f"{e}: Could not parse datestring provided.")
         raise dtp.ParserError(e)
 
     # All work is done with timezone aware objects.
@@ -96,13 +111,15 @@ def apply_logical_year_value_to_monthday_pair(datestring, scrape_datestamp):
     su_mnth = supplied_date.strftime("%m")
     su_dy = supplied_date.strftime("%d")
 
-    if len(sc_yyyy)+len(su_mnth)+len(su_dy) != 8 or not(f'{sc_yyyy}{su_mnth}{su_dy}'.isdigit()):
-        print(f'Parsed date returned y={sc_yyyy} m={su_mnth} d={su_dy}')
-        raise AttributeError('Argument must be a parseable datestring.')
+    if len(sc_yyyy) + len(su_mnth) + len(su_dy) != 8 or not (
+        f"{sc_yyyy}{su_mnth}{su_dy}".isdigit()
+    ):
+        print(f"Parsed date returned y={sc_yyyy} m={su_mnth} d={su_dy}")
+        raise AttributeError("Argument must be a parseable datestring.")
 
     offered_year = int(sc_yyyy)
-    prev_year = offered_year-1
-    next_year = offered_year+1
+    prev_year = offered_year - 1
+    next_year = offered_year + 1
 
     mm = int(su_mnth)
     dd = int(su_dy)
@@ -113,11 +130,11 @@ def apply_logical_year_value_to_monthday_pair(datestring, scrape_datestamp):
 
     # create list of possible dates
     dates = []
-    offered_datestamp = dt.datetime(offered_year,mm,dd,1,0,0,0,tzUTC)
+    offered_datestamp = dt.datetime(offered_year, mm, dd, 1, 0, 0, 0, tzUTC)
     dates.append(offered_datestamp)
-    prev_datestamp = dt.datetime(prev_year,mm,dd,1,0,0,0,tzUTC)
+    prev_datestamp = dt.datetime(prev_year, mm, dd, 1, 0, 0, 0, tzUTC)
     dates.append(prev_datestamp)
-    next_datestamp = dt.datetime(next_year,mm,dd,1,0,0,0,tzUTC)
+    next_datestamp = dt.datetime(next_year, mm, dd, 1, 0, 0, 0, tzUTC)
     dates.append(next_datestamp)
 
     # Create a dict of dates keyed on the number of days elapsed.
@@ -131,7 +148,7 @@ def apply_logical_year_value_to_monthday_pair(datestring, scrape_datestamp):
     keys = sorted(delta_dict.keys())
     corrected_datestamp = delta_dict[keys[0]]
 
-    # print(f'Offered:{datestring} and scrape year {scrape_datestamp}, Corrected:{corrected_datestamp}')    
+    # print(f'Offered:{datestring} and scrape year {scrape_datestamp}, Corrected:{corrected_datestamp}')
     # print(f'{delta_dict}')
 
     return corrected_datestamp
@@ -154,22 +171,25 @@ def extract_date(text_list):
         raise TypeError("Argument must be a list.")
     results = []
     # initializing bad_chars_list
-    bad_chars = ['\\n', "*"] # '\n' needed '\' escaped '\\' to function as desired to remove '\n'.
+    bad_chars = [
+        "\\n",
+        "*",
+    ]  # '\n' needed '\' escaped '\\' to function as desired to remove '\n'.
     for txt in text_list:
         # clean garbage characters from strings
-        # using replace() to remove bad_chars 
-        for chr in bad_chars :
-            txt = txt.replace(chr, '')        
+        # using replace() to remove bad_chars
+        for chr in bad_chars:
+            txt = txt.replace(chr, "")
         found = dts.search_dates(txt)
-        logger.debug(f'date search results: {found}')
+        logger.debug(f"date search results: {found}")
         if found != None:
             for itm in found:
                 string, datetimeobj = itm
-                if ':' in string: # use the entry that contains the full date and time.
-                    logger.debug(f'Found date in: {txt}')
+                if ":" in string:  # use the entry that contains the full date and time.
+                    logger.debug(f"Found date in: {txt}")
                     results.append(datetimeobj)
         else:
-            logger.debug(f'No date found in: {txt}')
+            logger.debug(f"No date found in: {txt}")
             results.append(None)
     return results
 

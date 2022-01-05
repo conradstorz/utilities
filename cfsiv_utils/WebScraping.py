@@ -28,12 +28,11 @@ def simple_get(url):
             if is_good_response(resp):
                 return resp.content
             else:
-                raise Warning(f'Bad response from: {url}')
+                raise Warning(f"Bad response from: {url}")
 
     except RequestException as e:
         log_error(f"Error during requests to {url} : {str(e)}")
-        raise Warning(f'{str(e)}')
-
+        raise Warning(f"{str(e)}")
 
 
 @logger.catch
@@ -52,24 +51,25 @@ def is_good_response(resp):
 @logger.catch
 def log_error(e):
     """
-    It is always a good idea to log errors. 
+    It is always a good idea to log errors.
     This function just prints them, but you can
     make it do anything.
     """
     print(e)
 
+
 @logger.catch
 def save_html_text(txt):
-    """Place 'txt' in a subdirectory in the current working directory 
+    """Place 'txt' in a subdirectory in the current working directory
     under a filename based on the current time.
     This will be useful for additional review of accuracy in data extraction.
     """
     # create file path
-    filename = f'{UTC_NOW_STRING()}_webscrape.rawhtml'
+    filename = f"{UTC_NOW_STRING()}_webscrape.rawhtml"
     # use a subdirectory of current working directory
-    dirobj = Path(Path.cwd(), 'raw_web_scrapes')
-    dirobj.mkdir(parents=True, exist_ok=True)   
-    # ensure that filename only contains valid characters 
+    dirobj = Path(Path.cwd(), "raw_web_scrapes")
+    dirobj.mkdir(parents=True, exist_ok=True)
+    # ensure that filename only contains valid characters
     pathobj = check_and_validate_fname(filename, dirobj)
     with open(pathobj, "w") as txtfile:
         txtfile.write(str(txt))
