@@ -11,4 +11,4 @@ import cfsiv_utils.WebScraping as ws
 import cfsiv_utils.log_handling as lh
 
 
-This repository is uploaded to PyPi as "CFSIV-utils-conradical"
+This repository is uploaded to PyPi as "CFSIV-utils-Conradical"

@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "CFSIV-utils-Conradical"
+version = "0.1.2"
+description = "A collection of Logging, Time, Date, Filehandling and webscraping functions"
+authors = ["Conrad Storz <conradstorz@gmail.com>"]
+license = "MIT License"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+loguru = "^0.5.3"
+dateparser = "^1.1.0"
+bs4 = "^0.0.1"
+tqdm = "^4.62.3"
+requests = "^2.27.0"
+pathlib = "^1.0.1"
+DateTime = "^4.3"
+python-dateutil = "^2.8.2"
+requests-toolbelt = "^0.9.1"
+pytz = "^2021.3"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
