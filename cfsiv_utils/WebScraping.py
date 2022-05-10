@@ -52,8 +52,6 @@ def is_good_response(resp):
 def log_error(e):
     """
     It is always a good idea to log errors.
-    This function just prints them, but you can
-    make it do anything.
     """
     logger.error(e)
 
@@ -78,7 +76,14 @@ def save_html_text(txt):
 
 @logger.catch
 def retrieve_cleaned_html(url, cache=False):
-    raw_resp = simple_get(url)
+    """Process url and return HTML parsed data. 
+        Return None-type if error encountered."""
+    try:
+        raw_resp = simple_get(url)
+    except Warning as e:
+        log_error(f"Error during simple_get({url}) : {str(e)}")
+        return None
+    
     if raw_resp is not None:
         if cache:
             save_html_text(raw_resp)
