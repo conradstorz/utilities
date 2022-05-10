@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "CFSIV-utils-Conradical"
-version = "0.1.2"
+name = "CFSIV_utils"
+version = "0.1.3"
 description = "A collection of Logging, Time, Date, Filehandling and webscraping functions"
 authors = ["Conrad Storz <conradstorz@gmail.com>"]
 license = "MIT License"
