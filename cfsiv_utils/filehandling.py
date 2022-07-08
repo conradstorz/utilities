@@ -4,6 +4,8 @@
     Files are handled using the pathlib approach.
     Sub-Directory structures can be generated from timestamps.
     Sub-Directory structures can be generated from filenames.
+    TODO export method that takes a directory suggestion and a filename suggestion and returns a pathobj in the current working directory.
+        NOTE: these functions are currently buried inside of the write_csv method.
 """
 
 import csv
