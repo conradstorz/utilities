@@ -31,9 +31,13 @@ def simple_get(url):
                 raise Warning(f"Bad response from: {url}")
 
     except RequestException as e:
+        logger.error(f"Error during requests to {url} : {str(e)}")
+        raise Warning(f"{str(e)}")
+    """
+    except requests.exceptions.ConnectionError as e:
         log_error(f"Error during requests to {url} : {str(e)}")
         raise Warning(f"{str(e)}")
-
+    """
 
 @logger.catch
 def is_good_response(resp):
@@ -46,14 +50,6 @@ def is_good_response(resp):
         and content_type is not None
         and content_type.find("html") > -1
     )
-
-
-@logger.catch
-def log_error(e):
-    """
-    It is always a good idea to log errors.
-    """
-    logger.error(e)
 
 
 @logger.catch
@@ -81,7 +77,7 @@ def retrieve_cleaned_html(url, cache=False):
     try:
         raw_resp = simple_get(url)
     except Warning as e:
-        log_error(f"Error during simple_get({url}) : {str(e)}")
+        logger.error(f"Error during simple_get({url}) : {str(e)}")
         return None
     
     if raw_resp is not None:
